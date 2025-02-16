@@ -8,13 +8,19 @@ This README provides a concise overview of how the script works and how to set i
   Install via:
   ```bash
   pip install atproto
-## Setup 
-Create a JSON credentials file (e.g., creds.json) with the following format:
+
+
+## Setup
+
+Create a JSON credentials file (e.g., `creds.json`) with the following format:
+
+```json
 {
   "bluesky_url": "https://bsky.app/profile/<handle>/post/<rkey>",
   "username": "<your_username>",
   "password": "<your_app_password>"
 }
+
 
 ## Usage 
 Run the script and enter your credentials file name when prompted:
