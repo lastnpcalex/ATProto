@@ -20,7 +20,7 @@ Create a JSON credentials file (e.g., `creds.json`) with the following format:
   "username": "<your_username>",
   "password": "<your_app_password>"
 }
-
+```
 
 ## Usage 
 Run the script and enter your credentials file name when prompted:
