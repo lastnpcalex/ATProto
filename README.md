@@ -43,7 +43,7 @@ Create a JSON credentials file (e.g., `creds.json`) with your Bluesky credential
 Run the script:
 
 ```bash
-python bluesky_explorer.py
+python script.py
 ```
 
 You'll be prompted to enter the path to your credentials file. If your credentials file includes a `bluesky_url`, the script will start by displaying that post. Otherwise, you'll be prompted to enter a URL or AT URI.
