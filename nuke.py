@@ -1,78 +1,4 @@
-def ask_for_deletion_mode():
-    """
-    Ask the user which deletion mode they want to use.
-    Returns a tuple of (mode, parameters)
-    """
-    print("\n" + "=" * 80)
-    print("BLUESKY POST DELETION OPTIONS")
-    print("=" * 80)
-    print("1. Delete ALL posts")
-    print("2. Delete last N posts")
-    print("3. Delete posts made before a specific date")
-    print("=" * 80)
-    
-    while True:
-        choice = input("\nSelect an option (1-3): ").strip()
-        
-        if choice == '1':
-            return 'all', None
-        elif choice == '2':
-            while True:
-                try:
-                    n = int(input("Enter number of most recent posts to delete: ").strip())
-                    if n <= 0:
-                        print("Please enter a positive number.")
-                        continue
-                    return 'last_n', n
-                except ValueError:
-                    print("Please enter a valid number.")
-        elif choice == '3':
-            while True:
-                date_str = input("Enter date (YYYY-MM-DD): ").strip()
-                try:
-                    # Parse the date string
-                    cut_off_date = date_parser.parse(date_str).replace(hour=0, minute=0, second=0, microsecond=0)
-                    return 'before_date', cut_off_date
-                except Exception:
-                    print("Invalid date format. Please use YYYY-MM-DD.")
-        else:
-            print("Invalid option. Please select 1, 2, or 3.")
-
-def should_delete_post(post, mode, params):
-    """
-    Determine if a post should be deleted based on the selected mode and parameters.
-    """
-    if mode == 'all':
-        return True
-    elif mode == 'last_n':
-        # This will be handled differently - we'll limit the number of posts we fetch
-        return True
-    elif mode == 'before_date':
-        cut_off_date = params
-        post_date = None
-        
-        # Try to extract the date from the post
-        if hasattr(post, 'indexedAt'):
-            try:
-                post_date = date_parser.parse(post.indexedAt)
-            except Exception:
-                pass
-                
-        if post_date is None and hasattr(post, 'record') and hasattr(post.record, 'createdAt'):
-            try:
-                post_date = date_parser.parse(post.record.createdAt)
-            except Exception:
-                pass
-        
-        if post_date is None:
-            # If we can't determine the date, we'll skip it to be safe
-            print(f"  Warning: Couldn't determine date for post {post.uri}, skipping")
-            return False
-            
-        # Delete if the post was made before the cut-off date
-        return post_date < cut_off_date
-    
-    return Falseimport re
+import re
 import json
 import sys
 import time
@@ -369,6 +295,82 @@ def estimate_total_posts(client):
     except Exception as e:
         print(f"Error estimating posts: {e}")
         return "unknown", []
+
+def ask_for_deletion_mode():
+    """
+    Ask the user which deletion mode they want to use.
+    Returns a tuple of (mode, parameters)
+    """
+    print("\n" + "=" * 80)
+    print("BLUESKY POST DELETION OPTIONS")
+    print("=" * 80)
+    print("1. Delete ALL posts")
+    print("2. Delete last N posts")
+    print("3. Delete posts made before a specific date")
+    print("=" * 80)
+    
+    while True:
+        choice = input("\nSelect an option (1-3): ").strip()
+        
+        if choice == '1':
+            return 'all', None
+        elif choice == '2':
+            while True:
+                try:
+                    n = int(input("Enter number of most recent posts to delete: ").strip())
+                    if n <= 0:
+                        print("Please enter a positive number.")
+                        continue
+                    return 'last_n', n
+                except ValueError:
+                    print("Please enter a valid number.")
+        elif choice == '3':
+            while True:
+                date_str = input("Enter date (YYYY-MM-DD): ").strip()
+                try:
+                    # Parse the date string
+                    cut_off_date = date_parser.parse(date_str).replace(hour=0, minute=0, second=0, microsecond=0)
+                    return 'before_date', cut_off_date
+                except Exception:
+                    print("Invalid date format. Please use YYYY-MM-DD.")
+        else:
+            print("Invalid option. Please select 1, 2, or 3.")
+
+def should_delete_post(post, mode, params):
+    """
+    Determine if a post should be deleted based on the selected mode and parameters.
+    """
+    if mode == 'all':
+        return True
+    elif mode == 'last_n':
+        # This will be handled differently - we'll limit the number of posts we fetch
+        return True
+    elif mode == 'before_date':
+        cut_off_date = params
+        post_date = None
+        
+        # Try to extract the date from the post
+        if hasattr(post, 'indexedAt'):
+            try:
+                post_date = date_parser.parse(post.indexedAt)
+            except Exception:
+                pass
+                
+        if post_date is None and hasattr(post, 'record') and hasattr(post.record, 'createdAt'):
+            try:
+                post_date = date_parser.parse(post.record.createdAt)
+            except Exception:
+                pass
+        
+        if post_date is None:
+            # If we can't determine the date, we'll skip it to be safe
+            print(f"  Warning: Couldn't determine date for post {post.uri}, skipping")
+            return False
+            
+        # Delete if the post was made before the cut-off date
+        return post_date < cut_off_date
+    
+    return False
 
 def main():
     # Get credentials
